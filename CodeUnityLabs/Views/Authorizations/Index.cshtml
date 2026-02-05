@@ -1,0 +1,65 @@
+﻿@model IEnumerable<CodeUnityLabs.Models.Authorizations>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.User_Id)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Permission)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Granted_By)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Granted_At)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Expires_At)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Priority)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.User_Id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Permission)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Granted_By)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Granted_At)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Expires_At)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Priority)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Authorization_Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Authorization_Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Authorization_Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
