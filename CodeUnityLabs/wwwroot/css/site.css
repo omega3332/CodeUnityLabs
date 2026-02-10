@@ -1,22 +1,85 @@
-html {
-  font-size: 14px;
+body.app {
+    background-color: #f4f6f9;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+/* Page container */
+.page {
+    max-width: 1200px;
+    padding: 32px 16px;
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+/* Header */
+.page-header {
+    margin-bottom: 24px;
 }
 
-html {
-  position: relative;
-  min-height: 100%;
+.page-title {
+    font-size: 28px;
+    font-weight: 600;
+    color: #212529;
 }
 
-body {
-  margin-bottom: 60px;
+/* Main card */
+.content-card {
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 24px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
 }
+
+/* Tables */
+table {
+    margin-top: 16px;
+}
+
+.table th {
+    background-color: #f1f3f5;
+    font-weight: 600;
+}
+.table th {
+    background-color: #f1f3f5;
+    font-weight: 600;
+}
+
+/* Override only when table-dark is used */
+.table-dark th {
+    background-color: #212529 !important;
+    color: #fff !important;
+}
+
+
+/* Buttons spacing */
+.btn {
+    border-radius: 8px;
+}
+.form-label {
+    font-weight: 500;
+    color: #495057;
+}
+
+.badge {
+    padding: 6px 10px;
+    font-size: 13px;
+}
+
+.table td, .table th {
+    vertical-align: middle;
+}
+.stat-card {
+    background: white;
+    border-radius: 14px;
+    padding: 24px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+}
+
+    .stat-card h6 {
+        color: #6c757d;
+        font-size: 14px;
+        margin-bottom: 8px;
+    }
+
+    .stat-card h2 {
+        margin: 0;
+        font-weight: 600;
+    }

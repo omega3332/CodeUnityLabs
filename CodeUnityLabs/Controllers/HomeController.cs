@@ -1,22 +1,32 @@
-using System.Diagnostics;
+using CodeUnityLabs.Data;
 using CodeUnityLabs.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
 
 namespace CodeUnityLabs.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly ApplicationDbContext _context;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, ApplicationDbContext context)
         {
             _logger = logger;
+            _context = context;
         }
+
 
         public IActionResult Index()
         {
+            ViewBag.UserCount = _context.Users.Count();
+            ViewBag.ReservationCount = _context.Reservations.Count();
+            ViewBag.WaitingCount = _context.WaitingList.Count();
+
             return View();
         }
+
 
         public IActionResult Privacy()
         {

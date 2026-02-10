@@ -1,10 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using CodeUnityLabs.Models; 
 
 namespace CodeUnityLabs.Models
 {
     public class Rezervation
     {
+
         [Key]
         [Column("reservation_id")]
         public int Reservation_Id { get; set; }
@@ -30,8 +32,7 @@ namespace CodeUnityLabs.Models
         [Column("end_time")]
         public DateTime End_Time { get; set; }
 
-        [Column("status")]
-        public string? Status { get; set; }
+        public ReservationStatus Status { get; set; }
 
         [Column("priority")]
         public int Priority { get; set; }

@@ -22,9 +22,39 @@ namespace CodeUnityLabs.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<UserType>().ToTable("UserType"); 
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<UserType>().HasData(
+     new UserType { User_Type_Id = 1, Type_Name = "Admin" },
+     new UserType { User_Type_Id = 2, Type_Name = "Staff" },
+     new UserType { User_Type_Id = 3, Type_Name = "Student" }
+ );
+
+
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.Email)
+                .IsUnique();
+            modelBuilder.Entity<Authorizations>()
+    .HasOne(a => a.User)
+    .WithMany(u => u.Authorizations)
+    .HasForeignKey(a => a.User_Id)
+    .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Rezervation>()
+                .HasOne(r => r.User)
+                .WithMany(u => u.Rezervations)
+                .HasForeignKey(r => r.User_Id)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<WaitingList>()
+                .HasOne(w => w.User)
+                .WithMany(u => u.WaitingLists)
+                .HasForeignKey(w => w.User_Id)
+                .OnDelete(DeleteBehavior.Cascade);
+
         }
 
-        
+
+
     }
 }

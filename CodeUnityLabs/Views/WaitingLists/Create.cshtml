@@ -3,46 +3,55 @@
 @{
     ViewData["Title"] = "Create";
 }
-
-<h1>Create</h1>
-
-<h4>WaitingList</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="User_Id" class="control-label"></label>
-                <input asp-for="User_Id" class="form-control" />
-                <span asp-validation-for="User_Id" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Requested_At" class="control-label"></label>
-                <input asp-for="Requested_At" class="form-control" />
-                <span asp-validation-for="Requested_At" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Status" class="control-label"></label>
-                <input asp-for="Status" class="form-control" />
-                <span asp-validation-for="Status" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Priority" class="control-label"></label>
-                <input asp-for="Priority" class="form-control" />
-                <span asp-validation-for="Priority" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+<form asp-controller="WaitingLists" asp-action="Create" method="post">
+    @Html.AntiForgeryToken()
+    <div class="mb-3">
+        <label asp-for="User_Id"></label>
+        <select asp-for="User_Id" class="form-select" asp-items="ViewBag.Users">
+            <option value="">Select User</option>
+        </select>
+        <span asp-validation-for="User_Id" class="text-danger"></span>
     </div>
+
+    <div class="mb-3">
+        <label asp-for="Requested_At"></label>
+        <input asp-for="Requested_At" type="datetime-local" class="form-control" />
+        <span asp-validation-for="Requested_At" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Status"></label>
+        <select asp-for="Status" class="form-select">
+            <option value="Active">Active</option>
+            <option value="Inactive">Inactive</option>
+        </select>
+        <span asp-validation-for="Status" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+    <label asp-for="Priority" class="form-label"></label>
+        <select asp-for="Priority" class="form-select">
+            <option value="">Select Priority</option>
+            @for (int i = 1; i <= 5; i++)
+            {
+                if (Model?.Priority == i)
+                {
+                    <option value="@i" selected>@i</option>
+                }
+                else
+                {
+                    <option value="@i">@i</option>
+                }
+            }
+        </select>
+    <span asp-validation-for="Priority" class="text-danger"></span>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+
+    <button type="submit" class="btn btn-success">Save</button>
+    <a asp-action="Index" class="btn btn-secondary ms-2">Back</a>
+</form>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @await Html.PartialAsync("_ValidationScriptsPartial")
 }

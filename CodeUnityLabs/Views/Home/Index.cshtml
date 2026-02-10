@@ -1,8 +1,35 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Dashboard";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="row g-4">
+
+    <div class="col-md-4">
+        <div class="stat-card">
+            <h6>Total Users</h6>
+            <h2>@ViewBag.UserCount</h2>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="stat-card">
+            <h6>Reservations</h6>
+            <h2>@ViewBag.ReservationCount</h2>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="stat-card">
+            <h6>Waiting List</h6>
+            <h2>@ViewBag.WaitingCount</h2>
+        </div>
+    </div>
+
+</div>
+
+<div class="content-card mt-4">
+    <h5 class="mb-3">Welcome</h5>
+    <p class="text-muted mb-0">
+        Use the navigation above to manage users, reservations and resources.
+    </p>
 </div>

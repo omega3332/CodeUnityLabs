@@ -59,9 +59,19 @@ namespace CodeUnityLabs.Controllers
             if (ModelState.IsValid)
             {
                 _context.Add(resource);
-                await _context.SaveChangesAsync();
+                try
+                {
+                    await _context.SaveChangesAsync();
+                }
+                catch (Exception ex)
+                {
+                    // Log or inspect the exception
+                    Console.WriteLine(ex.Message);
+                    throw;
+                }
                 return RedirectToAction(nameof(Index));
             }
+
             return View(resource);
         }
 

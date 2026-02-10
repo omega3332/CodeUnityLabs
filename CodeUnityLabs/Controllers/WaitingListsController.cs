@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CodeUnityLabs.Data;
 using CodeUnityLabs.Models;
+using System.Threading.Tasks;
+using System.Linq;
 
 namespace CodeUnityLabs.Controllers
 {
@@ -22,76 +20,59 @@ namespace CodeUnityLabs.Controllers
         // GET: WaitingLists
         public async Task<IActionResult> Index()
         {
-            return View(await _context.WaitingList.ToListAsync());
-        }
-
-        // GET: WaitingLists/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var waitingList = await _context.WaitingList
-                .FirstOrDefaultAsync(m => m.Waiting_Id == id);
-            if (waitingList == null)
-            {
-                return NotFound();
-            }
-
-            return View(waitingList);
+            var list = await _context.WaitingList.Include(w => w.User).ToListAsync();
+            return View(list);
         }
 
         // GET: WaitingLists/Create
         public IActionResult Create()
         {
+            PopulateUsersDropdown();
             return View();
         }
 
         // POST: WaitingLists/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Waiting_Id,User_Id,Requested_At,Status,Priority")] WaitingList waitingList)
         {
-            if (ModelState.IsValid)
+            // Set defaults to avoid ModelState errors
+            if (waitingList.Requested_At == default)
+                waitingList.Requested_At = DateTime.Now;
+            if (string.IsNullOrEmpty(waitingList.Status))
+                waitingList.Status = "Pending";
+
+            if (!ModelState.IsValid)
             {
-                _context.Add(waitingList);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                PopulateUsersDropdown(waitingList.User_Id);
+                return View(waitingList);
             }
-            return View(waitingList);
+
+            _context.Add(waitingList);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
+
+
 
         // GET: WaitingLists/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var waitingList = await _context.WaitingList.FindAsync(id);
-            if (waitingList == null)
-            {
-                return NotFound();
-            }
+            if (waitingList == null) return NotFound();
+
+            PopulateUsersDropdown(waitingList.User_Id);
             return View(waitingList);
         }
 
         // POST: WaitingLists/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Waiting_Id,User_Id,Requested_At,Status,Priority")] WaitingList waitingList)
         {
-            if (id != waitingList.Waiting_Id)
-            {
-                return NotFound();
-            }
+            if (id != waitingList.Waiting_Id) return NotFound();
 
             if (ModelState.IsValid)
             {
@@ -102,34 +83,25 @@ namespace CodeUnityLabs.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!WaitingListExists(waitingList.Waiting_Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    if (!WaitingListExists(waitingList.Waiting_Id)) return NotFound();
+                    throw;
                 }
                 return RedirectToAction(nameof(Index));
             }
+
+            PopulateUsersDropdown(waitingList.User_Id);
             return View(waitingList);
         }
 
         // GET: WaitingLists/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var waitingList = await _context.WaitingList
+                .Include(w => w.User)
                 .FirstOrDefaultAsync(m => m.Waiting_Id == id);
-            if (waitingList == null)
-            {
-                return NotFound();
-            }
+            if (waitingList == null) return NotFound();
 
             return View(waitingList);
         }
@@ -143,15 +115,20 @@ namespace CodeUnityLabs.Controllers
             if (waitingList != null)
             {
                 _context.WaitingList.Remove(waitingList);
+                await _context.SaveChangesAsync();
             }
-
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool WaitingListExists(int id)
         {
             return _context.WaitingList.Any(e => e.Waiting_Id == id);
+        }
+
+        // Helper: populate users dropdown
+        private void PopulateUsersDropdown(object? selectedUser = null)
+        {
+            ViewBag.Users = new SelectList(_context.Users, "User_Id", "Name", selectedUser);
         }
     }
 }

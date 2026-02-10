@@ -1,45 +1,37 @@
-﻿@model IEnumerable<CodeUnityLabs.Models.Rezervation>
+﻿<div class="d-flex justify-content-between align-items-center mb-3">
+    <p class="text-muted mb-0">All reservations list</p>
 
-@{
-    ViewData["Title"] = "Index";
-}
+    <a asp-action="Create" class="btn btn-primary">
+        + New Reservation
+    </a>
+</div>
 
-<h1>Index</h1>
-
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-
-<table class="table">
+<table class="table table-hover align-middle">
     <thead>
         <tr>
-            <th>@Html.DisplayNameFor(model => model.User_Id)</th>
-            <th>@Html.DisplayNameFor(model => model.Resource_Id)</th>
-            <th>@Html.DisplayNameFor(model => model.Equipment_Id)</th>
-            <th>@Html.DisplayNameFor(model => model.Room_Id)</th>
-            <th>@Html.DisplayNameFor(model => model.Start_Time)</th>
-            <th>@Html.DisplayNameFor(model => model.End_Time)</th>
-            <th>@Html.DisplayNameFor(model => model.Status)</th>
-            <th>@Html.DisplayNameFor(model => model.Priority)</th>
-            <th></th>
+            <th>User</th>
+            <th>Resource</th>
+            <th>Start</th>
+            <th>End</th>
+            <th>Status</th>
+            <th class="text-end">Actions</th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model)
         {
             <tr>
-                <td>@Html.DisplayFor(modelItem => item.User_Id)</td>
-                <td>@Html.DisplayFor(modelItem => item.Resource_Id)</td>
-                <td>@Html.DisplayFor(modelItem => item.Equipment_Id)</td>
-                <td>@Html.DisplayFor(modelItem => item.Room_Id)</td>
-                <td>@Html.DisplayFor(modelItem => item.Start_Time)</td>
-                <td>@Html.DisplayFor(modelItem => item.End_Time)</td>
-                <td>@Html.DisplayFor(modelItem => item.Status)</td>
-                <td>@Html.DisplayFor(modelItem => item.Priority)</td>
+                <td>@item.User?.Email</td>
+                <td>@item.Resource.Resource_Name</td>
+                <td>@item.Start_Time</td>
+                <td>@item.End_Time</td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@item.Reservation_Id">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.Reservation_Id">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Reservation_Id">Delete</a>
+                    <span class="badge bg-secondary">@item.Status</span>
+                </td>
+                <td class="text-end">
+                    <a asp-action="Edit" asp-route-id="@item.Reservation_Id" class="btn btn-sm btn-outline-primary">Edit</a>
+                    <a asp-action="Details" asp-route-id="@item.Reservation_Id" class="btn btn-sm btn-outline-secondary">View</a>
+                    <a asp-action="Delete" asp-route-id="@item.Reservation_Id" class="btn btn-sm btn-outline-danger">Delete</a>
                 </td>
             </tr>
         }

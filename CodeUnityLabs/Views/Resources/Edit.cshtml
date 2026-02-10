@@ -4,41 +4,41 @@
     ViewData["Title"] = "Edit";
 }
 
-<h1>Edit</h1>
+<div class="container mt-5">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h3>@ViewData["Title"] Resource</h3>
+        </div>
+        <div class="card-body">
+            <form asp-action="Edit" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-<h4>Resource</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Resource_Id" />
-            <div class="form-group">
-                <label asp-for="Resource_Name" class="control-label"></label>
-                <input asp-for="Resource_Name" class="form-control" />
-                <span asp-validation-for="Resource_Name" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Resource_Type" class="control-label"></label>
-                <input asp-for="Resource_Type" class="form-control" />
-                <span asp-validation-for="Resource_Type" class="text-danger"></span>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="Available" /> @Html.DisplayNameFor(model => model.Available)
-                </label>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+                <input type="hidden" asp-for="Resource_Id" />
+
+                <div class="mb-3">
+                    <label asp-for="Resource_Name"></label>
+                    <input asp-for="Resource_Name" class="form-control" />
+                    <span asp-validation-for="Resource_Name" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Resource_Type"></label>
+                    <input asp-for="Resource_Type" class="form-control" />
+                    <span asp-validation-for="Resource_Type" class="text-danger"></span>
+                </div>
+
+                <div class="form-check mb-3">
+                    <input asp-for="Available" class="form-check-input" />
+                    <label asp-for="Available" class="form-check-label"></label>
+                </div>
+
+                <button type="submit" class="btn btn-success">Save</button>
+                <a asp-action="Index" class="btn btn-secondary ms-2">Back</a>
+            </form>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @await Html.PartialAsync("_ValidationScriptsPartial")
 }

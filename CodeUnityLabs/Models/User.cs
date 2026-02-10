@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Net;
+
 namespace CodeUnityLabs.Models
 {
     public class User
@@ -8,23 +8,24 @@ namespace CodeUnityLabs.Models
         [Key]
         public int User_Id { get; set; }
 
-        [Required(ErrorMessage = "Name is required")]
-        public string Name { get; set; }
+        [Required]
+        public required string Name { get; set; }
 
-        [Required(ErrorMessage = "Email is required")]
+        [Required]
         [EmailAddress]
-        public string Email { get; set; }
+        public required string Email { get; set; }
 
-        [Required(ErrorMessage = "Password is required")]
-        public string Password { get; set; }
+        [Required]
+        public required string Password { get; set; }
 
-        [Required(ErrorMessage = "User Type is required")]
+        [Range(1, int.MaxValue, ErrorMessage = "Select User Type")]
         public int User_Type_Id { get; set; }
 
-        // Navigation property
-        public UserType UserType { get; set; }
-        public ICollection<Authorizations>? Authorizations { get; set; }
-        public ICollection<WaitingList>? WaitingLists { get; set; }
-        public ICollection<Rezervation>? Reservations { get; set; }
+        public UserType? UserType { get; set; }
+
+        public ICollection<Rezervation> Rezervations { get; set; } = new List<Rezervation>();
+        public ICollection<Authorizations> Authorizations { get; set; } = new List<Authorizations>();
+        public ICollection<WaitingList> WaitingLists { get; set; } = new List<WaitingList>();
+
     }
 }

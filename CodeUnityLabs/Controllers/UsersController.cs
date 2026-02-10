@@ -22,7 +22,11 @@ namespace CodeUnityLabs.Controllers
         // GET: Users
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Users.Include(u => u.UserType).ToListAsync());
+            return View(
+                await _context.Users
+                    .Include(u => u.UserType)
+                    .ToListAsync()
+            );
         }
 
         // GET: Users/Details/5
@@ -46,27 +50,28 @@ namespace CodeUnityLabs.Controllers
             return View();
         }
 
-        // POST: Users/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,Email,Password,User_Type_Id")] User user)
+        public async Task<IActionResult> Create(User user)
         {
-            // Prevent duplicate emails
             if (_context.Users.Any(u => u.Email == user.Email))
             {
-                ModelState.AddModelError("Email", "A user with this email already exists.");
+                ModelState.AddModelError("Email", "Email already exists");
             }
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                _context.Add(user);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                PopulateUserTypesDropDown(user.User_Type_Id);
+                return View(user);
             }
 
-            PopulateUserTypesDropDown(user.User_Type_Id);
-            return View(user);
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
+
+
+
 
         // GET: Users/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -139,7 +144,7 @@ namespace CodeUnityLabs.Controllers
         }
 
         // Helper: Populate UserType dropdown
-        private void PopulateUserTypesDropDown(object selectedType = null)
+        private void PopulateUserTypesDropDown(object? selectedType = null)
         {
             var userTypes = _context.UserTypes.ToList();
 
