@@ -1,88 +1,188 @@
+/* ===============================
+   GLOBAL
+================================ */
 body.app {
-    background-color: #f4f6f9;
+    background: linear-gradient(135deg, #eef2f7, #f8fafc);
     font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    color: #1f2937;
 }
 
-/* Page container */
+/* ===============================
+   PAGE CONTAINER
+================================ */
 .page {
-    max-width: 1200px;
-    padding: 32px 16px;
+    max-width: 1250px;
+    padding: 40px 20px;
 }
 
-/* Header */
+/* ===============================
+   HEADER
+================================ */
 .page-header {
-    margin-bottom: 24px;
+    margin-bottom: 28px;
 }
 
 .page-title {
-    font-size: 28px;
-    font-weight: 600;
-    color: #212529;
+    font-size: 30px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    color: #111827;
 }
 
-/* Main card */
+/* ===============================
+   CARD
+================================ */
 .content-card {
     background: #ffffff;
-    border-radius: 14px;
-    padding: 24px;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    border-radius: 16px;
+    padding: 28px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.04), 0 12px 32px rgba(0,0,0,0.06);
+    border: 1px solid rgba(0,0,0,0.04);
+    transition: all 0.25s ease;
 }
 
-/* Tables */
-table {
-    margin-top: 16px;
-}
+    .content-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 24px rgba(0,0,0,0.08), 0 18px 48px rgba(0,0,0,0.10);
+    }
 
-.table th {
-    background-color: #f1f3f5;
-    font-weight: 600;
-}
-
-.table th {
-    background-color: #f1f3f5;
-    font-weight: 600;
-}
-
-/* Override only when table-dark is used */
-.table-dark th {
-    background-color: #212529 !important;
-    color: #fff !important;
-}
-
-
-/* Buttons spacing */
-.btn {
-    border-radius: 8px;
-}
-
-.form-label {
-    font-weight: 500;
-    color: #495057;
-}
-
-.badge {
-    padding: 6px 10px;
-    font-size: 13px;
-}
-
-.table td, .table th {
-    vertical-align: middle;
-}
-
+/* ===============================
+   STAT CARDS
+================================ */
 .stat-card {
-    background: white;
-    border-radius: 14px;
-    padding: 24px;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    background: linear-gradient(135deg, #ffffff, #f9fafb);
+    border-radius: 16px;
+    padding: 28px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+    border: 1px solid rgba(0,0,0,0.04);
+    transition: all 0.25s ease;
 }
+
+    .stat-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 14px 30px rgba(0,0,0,0.10);
+    }
 
     .stat-card h6 {
-        color: #6c757d;
+        color: #6b7280;
         font-size: 14px;
-        margin-bottom: 8px;
+        margin-bottom: 6px;
     }
 
     .stat-card h2 {
-        margin: 0;
+        font-size: 32px;
+        font-weight: 700;
+        color: #111827;
+    }
+
+/* ===============================
+   TABLE
+================================ */
+table {
+    margin-top: 18px;
+}
+
+.table {
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+    .table th {
+        background-color: #f9fafb;
         font-weight: 600;
+        color: #374151;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .table td {
+        border-bottom: 1px solid #f1f3f5;
+    }
+
+    .table tbody tr {
+        transition: background 0.15s ease;
+    }
+
+        .table tbody tr:hover {
+            background: #f9fafb;
+        }
+
+/* Dark table fix */
+.table-dark th {
+    background-color: #111827 !important;
+    color: white !important;
+}
+
+/* ===============================
+   BUTTONS
+================================ */
+.btn {
+    border-radius: 10px;
+    padding: 6px 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    border: none;
+}
+
+    .btn-primary:hover {
+        background: linear-gradient(135deg, #1d4ed8, #1e40af);
+        transform: translateY(-1px);
+    }
+
+.btn-danger:hover,
+.btn-warning:hover,
+.btn-success:hover {
+    transform: translateY(-1px);
+}
+
+/* ===============================
+   FORM
+================================ */
+.form-label {
+    font-weight: 500;
+    color: #374151;
+}
+
+.form-control {
+    border-radius: 10px;
+    border: 1px solid #d1d5db;
+}
+
+    .form-control:focus {
+        border-color: #2563eb;
+        box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
+    }
+
+/* ===============================
+   BADGES
+================================ */
+.badge {
+    padding: 6px 12px;
+    font-size: 12px;
+    border-radius: 999px;
+}
+
+/* ===============================
+   NAVBAR IMPROVEMENT
+================================ */
+.navbar {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.navbar-brand {
+    font-weight: 600;
+    letter-spacing: 0.3px;
+}
+
+.nav-link {
+    border-radius: 8px;
+    padding: 6px 12px !important;
+    transition: background 0.2s ease;
+}
+
+    .nav-link:hover {
+        background: rgba(255,255,255,0.12);
     }

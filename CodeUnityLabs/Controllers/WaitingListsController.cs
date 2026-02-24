@@ -1,10 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using CodeUnityLabs.Data;
+using CodeUnityLabs.Models;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using CodeUnityLabs.Data;
-using CodeUnityLabs.Models;
-using System.Threading.Tasks;
-using System.Linq;
 
 namespace CodeUnityLabs.Controllers
 {
@@ -20,6 +18,7 @@ namespace CodeUnityLabs.Controllers
         // GET: WaitingLists
         public async Task<IActionResult> Index()
         {
+            ViewBag.UserTypeId = HttpContext.Session.GetInt32("UserTypeId");
             var list = await _context.WaitingList.Include(w => w.User).ToListAsync();
             return View(list);
         }

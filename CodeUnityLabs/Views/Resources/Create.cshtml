@@ -3,6 +3,7 @@
 @{
     ViewData["Title"] = "Create";
 }
+
 <div class="container mt-5">
     <div class="card shadow-sm">
         <div class="card-header bg-primary text-white">
@@ -24,20 +25,30 @@
                     <span asp-validation-for="Resource_Type" class="text-danger"></span>
                 </div>
 
-                <div class="form-check mb-3">
-                    <input asp-for="Available" class="form-check-input" />
-                    <label asp-for="Available" class="form-check-label"></label>
+                <div class="mb-3">
+                    <label asp-for="Quantity" class="form-label"></label>
+                    <input asp-for="Quantity" class="form-control" type="number" min="0" />
+                    <span asp-validation-for="Quantity" class="text-danger"></span>
                 </div>
 
-                <button type="submit" class="btn btn-success">Create</button>
+                <!-- Remove the manual Available checkbox -->
+                <!-- Available will be calculated automatically: Available = Quantity > 0 -->
+                @* Only Admin/Staff can create *@
+                @if (ViewBag.UserTypeId == 1 || ViewBag.UserTypeId == 2)
+                {
+                    <button type="submit" class="btn btn-success">Create</button>
+                }
+                else
+                {
+                    <p class="text-danger">You do not have permission to create resources.</p>
+                }
             </form>
-
         </div>
     </div>
 </div>
 
 @section Scripts {
-    @{
+@{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+  }
 }

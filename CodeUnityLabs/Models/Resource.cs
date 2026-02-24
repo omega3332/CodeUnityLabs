@@ -3,7 +3,7 @@ namespace CodeUnityLabs.Models
 {
     public class Resource
     {
-        [Key] 
+        [Key]
         public int Resource_Id { get; set; }
 
         [Required(ErrorMessage = "Resource Name is required")]
@@ -12,7 +12,11 @@ namespace CodeUnityLabs.Models
         [Required(ErrorMessage = "Resource Type is required")]
         public string Resource_Type { get; set; } = string.Empty;
 
-        public bool Available { get; set; }
+        public bool Available => Quantity > 0;
+        [Range(0, int.MaxValue)]
+        public int Quantity { get; set; } = 1;  // Total available units
+
+
 
         public ICollection<Rezervation>? Reservations { get; set; }
     }

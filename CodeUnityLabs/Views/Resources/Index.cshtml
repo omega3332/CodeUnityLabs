@@ -3,19 +3,25 @@
 @{
     ViewData["Title"] = "Resources";
 }
-
+@{
+    var userType = Context.Session.GetInt32("UserTypeId") ?? 3; 
+}
 <div class="container mt-5">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h2>@ViewData["Title"]</h2>
-        <a asp-action="Create" class="btn btn-primary">Create New</a>
+        @if (userType == 1 || userType == 2 || userType == 3)
+        {
+            <a asp-action="Create" class="btn btn-primary">Create New</a>
+        }
     </div>
 
     <table class="table table-striped table-hover shadow-sm">
         <thead class="table-dark">
             <tr>
-                <th>@Html.DisplayNameFor(model => model.Resource_Name)</th>
-                <th>@Html.DisplayNameFor(model => model.Resource_Type)</th>
-                <th>@Html.DisplayNameFor(model => model.Available)</th>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Quantity</th>
+                <th>Available</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -23,10 +29,11 @@
             @foreach (var item in Model)
             {
                 <tr>
-                    <td>@Html.DisplayFor(modelItem => item.Resource_Name)</td>
-                    <td>@Html.DisplayFor(modelItem => item.Resource_Type)</td>
+                    <td>@item.Resource_Name</td>
+                    <td>@item.Resource_Type</td>
+                    <td>@item.Quantity</td>
                     <td>
-                        @if (item.Available)
+                        @if (item.Available && item.Quantity > 0)
                         {
                             <span class="badge bg-success">Yes</span>
                         }
@@ -36,9 +43,12 @@
                         }
                     </td>
                     <td>
-                        <a asp-action="Edit" asp-route-id="@item.Resource_Id" class="btn btn-sm btn-warning me-1">Edit</a>
-                        <a asp-action="Details" asp-route-id="@item.Resource_Id" class="btn btn-sm btn-info me-1">Details</a>
-                        <a asp-action="Delete" asp-route-id="@item.Resource_Id" class="btn btn-sm btn-danger">Delete</a>
+                        @if (userType == 1 || userType == 2)
+                        {
+                            <a asp-action="Edit" asp-route-id="@item.Resource_Id" class="btn btn-sm btn-warning me-1">Edit</a>
+                            <a asp-action="Delete" asp-route-id="@item.Resource_Id" class="btn btn-sm btn-danger">Delete</a>
+                        }
+                        <a asp-action="Details" asp-route-id="@item.Resource_Id" class="btn btn-sm btn-info">Details</a>
                     </td>
                 </tr>
             }

@@ -1,13 +1,22 @@
-﻿<div class="d-flex justify-content-between align-items-center mb-3">
-    <p class="text-muted mb-0">All reservations list</p>
+﻿@model IEnumerable<CodeUnityLabs.Models.Rezervation>
 
-    <a asp-action="Create" class="btn btn-primary">
-        + New Reservation
-    </a>
+@{
+    ViewData["Title"] = "Reservations";
+}
+@{
+    var userType = Context.Session.GetInt32("UserTypeId") ?? 3;
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>@ViewData["Title"]</h2>
+    @if (ViewBag.UserTypeId == 1 || ViewBag.UserTypeId == 2 || ViewBag.UserTypeId == 3)
+    {
+        <a asp-action="Create" class="btn btn-primary">+ New Reservation</a>
+    }
 </div>
 
-<table class="table table-hover align-middle">
-    <thead>
+<table class="table table-hover align-middle shadow-sm">
+    <thead class="table-dark">
         <tr>
             <th>User</th>
             <th>Resource</th>
@@ -22,16 +31,37 @@
         {
             <tr>
                 <td>@item.User?.Email</td>
-                <td>@item.Resource.Resource_Name</td>
-                <td>@item.Start_Time</td>
-                <td>@item.End_Time</td>
+                <td>@item.Resource?.Resource_Name</td>
+                <td>@item.Start_Time.ToString("g")</td>
+                <td>@item.End_Time.ToString("g")</td>
                 <td>
-                    <span class="badge bg-secondary">@item.Status</span>
+                    @switch (item.Status)
+                    {
+                        case CodeUnityLabs.Models.ReservationStatus.Pending:
+                            <span class="badge bg-secondary">Pending</span>
+                            ;
+                            break;
+                        case CodeUnityLabs.Models.ReservationStatus.Approved:
+                            <span class="badge bg-success">Approved</span>
+                            ;
+                            break;
+                        case CodeUnityLabs.Models.ReservationStatus.Waiting:
+                            <span class="badge bg-warning text-dark">Waiting</span>
+                            ;
+                            break;
+                        case CodeUnityLabs.Models.ReservationStatus.Rejected:
+                            <span class="badge bg-danger">Rejected</span>
+                            ;
+                            break;
+                    }
                 </td>
-                <td class="text-end">
-                    <a asp-action="Edit" asp-route-id="@item.Reservation_Id" class="btn btn-sm btn-outline-primary">Edit</a>
-                    <a asp-action="Details" asp-route-id="@item.Reservation_Id" class="btn btn-sm btn-outline-secondary">View</a>
-                    <a asp-action="Delete" asp-route-id="@item.Reservation_Id" class="btn btn-sm btn-outline-danger">Delete</a>
+                <td>
+                    @if (ViewBag.UserTypeId == 1 || ViewBag.UserTypeId == 2)
+                    {
+                        <a asp-action="Edit" asp-route-id="@item.Reservation_Id" class="btn btn-sm btn-warning me-1">Edit</a>
+                        <a asp-action="Delete" asp-route-id="@item.Reservation_Id" class="btn btn-sm btn-danger">Delete</a>
+                    }
+                    <a asp-action="Details" asp-route-id="@item.Reservation_Id" class="btn btn-sm btn-info me-1">Details</a>
                 </td>
             </tr>
         }

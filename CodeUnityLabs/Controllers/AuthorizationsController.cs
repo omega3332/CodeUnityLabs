@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using CodeUnityLabs.Data;
+﻿using CodeUnityLabs.Data;
 using CodeUnityLabs.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace CodeUnityLabs.Controllers
 {
@@ -39,7 +34,7 @@ namespace CodeUnityLabs.Controllers
             {
                 return NotFound();
             }
-
+            ViewBag.UserTypeId = HttpContext.Session.GetInt32("UserTypeId");
             return View(authorizations);
         }
 

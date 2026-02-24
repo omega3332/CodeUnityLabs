@@ -27,9 +27,10 @@
                     <span asp-validation-for="Resource_Type" class="text-danger"></span>
                 </div>
 
-                <div class="form-check mb-3">
-                    <input asp-for="Available" class="form-check-input" />
-                    <label asp-for="Available" class="form-check-label"></label>
+                <div class="mb-3">
+                    <label asp-for="Quantity"></label>
+                    <input asp-for="Quantity" type="number" min="1" class="form-control" />
+                    <span asp-validation-for="Quantity" class="text-danger"></span>
                 </div>
 
                 <button type="submit" class="btn btn-success">Save</button>

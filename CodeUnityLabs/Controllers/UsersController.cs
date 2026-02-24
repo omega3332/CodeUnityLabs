@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using CodeUnityLabs.Data;
+using CodeUnityLabs.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using CodeUnityLabs.Data;
-using CodeUnityLabs.Models;
 
 namespace CodeUnityLabs.Controllers
 {
@@ -39,7 +35,7 @@ namespace CodeUnityLabs.Controllers
                 .FirstOrDefaultAsync(m => m.User_Id == id);
 
             if (user == null) return NotFound();
-
+            ViewBag.UserTypeId = HttpContext.Session.GetInt32("UserTypeId");
             return View(user);
         }
 

@@ -1,5 +1,6 @@
 ﻿@{
     ViewData["Title"] = "Dashboard";
+    var userType = ViewBag.UserTypeId ?? 0; // 1=Admin, 2=Staff, 3=User
 }
 
 <div class="row g-4">
@@ -28,8 +29,27 @@
 </div>
 
 <div class="content-card mt-4">
-    <h5 class="mb-3">Welcome</h5>
-    <p class="text-muted mb-0">
-        Use the navigation above to manage users, reservations and resources.
+    <h5 class="mb-3">Welcome @ViewBag.UserName</h5>
+    <p class="text-muted mb-3">
+        Use the navigation above to manage users, reservations, and resources.
     </p>
+
+    @* Role-based quick actions *@
+    <div class="d-flex gap-2">
+        @if (userType == 1) // Admin
+        {
+            <a class="btn btn-primary" asp-controller="Users" asp-action="Index">Manage Users</a>
+            <a class="btn btn-primary" asp-controller="Resources" asp-action="Index">Manage Resources</a>
+            <a class="btn btn-success" asp-controller="Rezervations" asp-action="Index">Manage Reservations</a>
+        }
+        else if (userType == 2) // Staff
+        {
+            <a class="btn btn-primary" asp-controller="Resources" asp-action="Index">Manage Resources</a>
+            <a class="btn btn-success" asp-controller="Rezervations" asp-action="Index">Manage Reservations</a>
+        }
+        else // Normal User
+        {
+            <a class="btn btn-success" asp-controller="Rezervations" asp-action="Index">My Reservations</a>
+        }
+    </div>
 </div>

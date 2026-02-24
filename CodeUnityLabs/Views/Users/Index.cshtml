@@ -7,9 +7,10 @@
 <div class="d-flex justify-content-between align-items-center mb-3">
     <p class="text-muted mb-0">System users</p>
 
-    <a asp-action="Create" class="btn btn-primary">
-        + New User
-    </a>
+    @if (ViewBag.UserTypeId == 1 || ViewBag.UserTypeId == 2 || ViewBag.UserTypeId == 3)
+    {
+        <a asp-action="Create" class="btn btn-primary">+ New User</a>
+    }
 </div>
 
 <table class="table table-hover align-middle">
@@ -26,9 +27,12 @@
             <tr>
                 <td>@user.Email</td>
                 <td class="text-end">
-                    <a asp-action="Edit" asp-route-id="@user.User_Id" class="btn btn-sm btn-outline-primary">Edit</a>
+                    @if (ViewBag.UserTypeId == 1 || ViewBag.UserTypeId == 2)
+                    {
+                        <a asp-action="Edit" asp-route-id="@user.User_Id" class="btn btn-sm btn-outline-primary">Edit</a>
+                        <a asp-action="Delete" asp-route-id="@user.User_Id" class="btn btn-sm btn-outline-danger">Delete</a>
+                    }
                     <a asp-action="Details" asp-route-id="@user.User_Id" class="btn btn-sm btn-outline-secondary">View</a>
-                    <a asp-action="Delete" asp-route-id="@user.User_Id" class="btn btn-sm btn-outline-danger">Delete</a>
                 </td>
             </tr>
         }

@@ -1,6 +1,7 @@
 ﻿using CodeUnityLabs.Data;
 using CodeUnityLabs.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace CodeUnityLabs.Controllers
 {
@@ -14,7 +15,10 @@ namespace CodeUnityLabs.Controllers
         }
 
         // GET: Login page
-        public IActionResult Login() => View();
+        public IActionResult Login()
+        {
+            return View();
+        }
 
         // POST: Handle login
         [HttpPost]
@@ -26,6 +30,7 @@ namespace CodeUnityLabs.Controllers
             if (user == null)
             {
                 ViewBag.Error = "Invalid email or password";
+                ViewBag.Email = email; // <-- pass email back to view
                 return View();
             }
 
@@ -35,6 +40,53 @@ namespace CodeUnityLabs.Controllers
             HttpContext.Session.SetInt32("UserTypeId", user.User_Type_Id);
 
             return RedirectToAction("Index", "Home");
+        }
+        // GET
+        public IActionResult Register()
+        {
+            ViewBag.UserTypes = new SelectList(
+                _context.UserTypes.ToList(),
+                "User_Type_Id",
+                "Type_Name"
+            );
+
+            return View();
+        }
+
+        // POST
+        [HttpPost]
+        public IActionResult Register(User user)
+        {
+            if (!ModelState.IsValid)
+            {
+                ViewBag.UserTypes = new SelectList(
+                    _context.UserTypes.ToList(),
+                    "User_Type_Id",
+                    "Type_Name"
+                );
+
+                return View(user);
+            }
+
+            var exists = _context.Users.Any(u => u.Email == user.Email);
+
+            if (exists)
+            {
+                ViewBag.Error = "Email already exists";
+
+                ViewBag.UserTypes = new SelectList(
+                    _context.UserTypes.ToList(),
+                    "User_Type_Id",
+                    "Type_Name"
+                );
+
+                return View(user);
+            }
+
+            _context.Users.Add(user);
+            _context.SaveChanges();
+
+            return RedirectToAction("Login");
         }
 
         // GET: Logout
