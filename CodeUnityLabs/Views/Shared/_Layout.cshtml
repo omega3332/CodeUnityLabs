@@ -3,31 +3,64 @@
 <head>
     <meta charset="utf-8" />
     <title>@ViewData["Title"] - CodeUnityLabs</title>
-
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
 <body class="app">
 
     <!-- TOP NAV -->
-    <nav class="navbar navbar-dark bg-dark px-4">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4">
         <a class="navbar-brand fw-bold" asp-controller="Home" asp-action="Index">
             CodeUnityLabs
         </a>
 
-        <div class="d-flex gap-3">
-            <a class="nav-link text-light" asp-controller="Users" asp-action="Index">Users</a>
-            <a class="nav-link text-light" asp-controller="Rezervations" asp-action="Index">Reservations</a>
-            <a class="nav-link text-light" asp-controller="Resources" asp-action="Index">Resources</a>
-            <a class="nav-link text-light" asp-controller="WaitingLists" asp-action="Index">Waiting List</a>
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link text-light" asp-controller="Users" asp-action="Index">Users</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-light" asp-controller="Rezervations" asp-action="Index">Reservations</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-light" asp-controller="Resources" asp-action="Index">Resources</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-light" asp-controller="WaitingLists" asp-action="Index">Waiting List</a>
+                </li>
+            </ul>
+
+           <ul class="navbar-nav">
+@if (Context.Session.GetInt32("UserId") != null)
+{
+    <li class="nav-item">
+        <span class="nav-link">Hello @Context.Session.GetString("UserName")</span>
+    </li>
+
+    <li class="nav-item">
+        <form asp-controller="Account" asp-action="Logout" method="post">
+            <button class="nav-link btn btn-link">Logout</button>
+        </form>
+    </li>
+}
+else
+{
+
+    <li class="nav-item">
+        <a class="nav-link" asp-controller="Account" asp-action="Login">Login</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" asp-controller="Account" asp-action="Register">Register</a>
+    </li>
+}
+</ul>
         </div>
     </nav>
 
     <!-- PAGE -->
-    <main class="container page">
-        <header class="page-header">
+    <main class="container page mt-4">
+        <header class="page-header mb-4">
             <h1 class="page-title">@ViewData["Title"]</h1>
         </header>
 

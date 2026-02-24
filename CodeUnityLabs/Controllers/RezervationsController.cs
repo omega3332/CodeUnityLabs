@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using CodeUnityLabs.Data;
 using CodeUnityLabs.Models;
+using System;
 
 namespace CodeUnityLabs.Controllers
 {
@@ -20,7 +21,10 @@ namespace CodeUnityLabs.Controllers
             _logger = logger;
         }
 
+        // ===============================
         // GET: Rezervations
+        // ===============================
+
         public async Task<IActionResult> Index()
         {
             var rezervations = await _context.Reservations
@@ -32,7 +36,10 @@ namespace CodeUnityLabs.Controllers
             return View(rezervations);
         }
 
-        // GET: Rezervations/Details/5
+        // ===============================
+        // GET: Details
+        // ===============================
+
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null) return NotFound();
@@ -48,52 +55,99 @@ namespace CodeUnityLabs.Controllers
             return View(rezervation);
         }
 
-        // GET: Rezervations/Create
+        // ===============================
+        // GET: Create
+        // ===============================
+
         public IActionResult Create()
         {
             PopulateDropDowns();
             return View();
         }
 
-        // POST: Rezervations/Create
+        // ===============================
+        // POST: Create
+        // ===============================
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Reservation_Id,User_Id,Resource_Id,Start_Time,End_Time,Status,Priority")] Rezervation rezervation)
+        public async Task<IActionResult> Create(Rezervation rezervation)
         {
-            if (!ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                PopulateDropDowns();
-                return View(rezervation);
+                var existing = await _context.Reservations
+                    .Where(r => r.Resource_Id == rezervation.Resource_Id
+                             && r.Status != ReservationStatus.Approved
+                             && r.Status != ReservationStatus.Rejected)
+                    .OrderBy(r => r.Priority)
+                    .FirstOrDefaultAsync();
+
+                if (existing == null)
+                {
+                    // FIRST → Pending
+                    rezervation.Status = ReservationStatus.Pending;
+                    rezervation.Priority = 1;
+                }
+                else
+                {
+                    // WAITING LIST
+                    rezervation.Status = ReservationStatus.Waiting;
+
+                    int maxPriority = await _context.Reservations
+                        .Where(r => r.Resource_Id == rezervation.Resource_Id)
+                        .MaxAsync(r => (int?)r.Priority) ?? 0;
+
+                    rezervation.Priority = maxPriority + 1;
+
+                    // 🔥 ADD TO WAITING LIST TABLE
+                    WaitingList waiting = new WaitingList
+                    {
+                        User_Id = rezervation.User_Id,
+                        Requested_At = DateTime.Now,
+                        Status = "Waiting",
+                        Priority = rezervation.Priority
+                    };
+
+                    _context.WaitingList.Add(waiting);
+                }
+
+                _context.Reservations.Add(rezervation);
+
+                await _context.SaveChangesAsync();
+
+                return RedirectToAction(nameof(Index));
             }
 
-            // Set default values if needed
-            if (rezervation.Start_Time == default) rezervation.Start_Time = System.DateTime.Now;
-            if (rezervation.End_Time == default) rezervation.End_Time = System.DateTime.Now.AddHours(1);
-
-            _context.Add(rezervation);
-            await _context.SaveChangesAsync();
-            TempData["SuccessMessage"] = "Reservation created successfully!";
-            return RedirectToAction(nameof(Index));
+            PopulateDropDowns();
+            return View(rezervation);
         }
 
-        // GET: Rezervations/Edit/5
+        // ===============================
+        // GET: Edit
+        // ===============================
+
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
 
             var rezervation = await _context.Reservations.FindAsync(id);
+
             if (rezervation == null) return NotFound();
 
             PopulateDropDowns(rezervation);
+
             return View(rezervation);
         }
 
-        // POST: Rezervations/Edit/5
+        // ===============================
+        // POST: Edit
+        // ===============================
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Reservation_Id,User_Id,Resource_Id,Start_Time,End_Time,Status,Priority")] Rezervation rezervation)
+        public async Task<IActionResult> Edit(int id, Rezervation rezervation)
         {
-            if (id != rezervation.Reservation_Id) return NotFound();
+            if (id != rezervation.Reservation_Id)
+                return NotFound();
 
             if (!ModelState.IsValid)
             {
@@ -104,20 +158,28 @@ namespace CodeUnityLabs.Controllers
             try
             {
                 _context.Update(rezervation);
+
                 await _context.SaveChangesAsync();
-                TempData["SuccessMessage"] = "Reservation updated successfully!";
+
+                TempData["SuccessMessage"] = "Reservation updated.";
             }
             catch (DbUpdateConcurrencyException ex)
             {
-                _logger.LogError(ex, "Concurrency error updating reservation {Id}", id);
-                if (!RezervationExists(id)) return NotFound();
+                _logger.LogError(ex, "Edit error");
+
+                if (!RezervationExists(id))
+                    return NotFound();
+
                 throw;
             }
 
             return RedirectToAction(nameof(Index));
         }
 
-        // GET: Rezervations/Delete/5
+        // ===============================
+        // GET: Delete
+        // ===============================
+
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return NotFound();
@@ -125,60 +187,127 @@ namespace CodeUnityLabs.Controllers
             var rezervation = await _context.Reservations
                 .Include(r => r.User)
                 .Include(r => r.Resource)
-                .AsNoTracking()
                 .FirstOrDefaultAsync(r => r.Reservation_Id == id);
 
-            if (rezervation == null) return NotFound();
+            if (rezervation == null)
+                return NotFound();
 
             return View(rezervation);
         }
 
-        // POST: Rezervations/Delete/5
+        // ===============================
+        // POST: DeleteConfirmed
+        // ===============================
+
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var rezervation = await _context.Reservations.FindAsync(id);
+
             if (rezervation != null)
             {
+                int resourceId = rezervation.Resource_Id;
+
                 _context.Reservations.Remove(rezervation);
+
                 await _context.SaveChangesAsync();
-                TempData["SuccessMessage"] = $"Reservation {rezervation.Reservation_Id} deleted successfully!";
+
+                await ApproveNextWaiting(resourceId);
+
+                TempData["SuccessMessage"] = "Reservation deleted.";
             }
 
             return RedirectToAction(nameof(Index));
         }
 
-        // Private Helpers
-        private bool RezervationExists(int id) =>
-            _context.Reservations.Any(e => e.Reservation_Id == id);
+        // ===============================
+        // Approve Next Waiting
+        // ===============================
 
-        // Populate dropdowns
+        private async Task ApproveNextWaiting(int resourceId)
+        {
+            var next = await _context.WaitingList
+                .Where(w => w.Status == "Pending")
+                .OrderBy(w => w.Priority)
+                .ThenBy(w => w.Requested_At)
+                .FirstOrDefaultAsync();
+
+            if (next == null)
+                return;
+
+            var reservation = new Rezervation
+            {
+                User_Id = next.User_Id,
+                Resource_Id = resourceId,
+                Start_Time = DateTime.Now,
+                End_Time = DateTime.Now.AddHours(1),
+                Status = ReservationStatus.Approved,
+                Priority = next.Priority
+            };
+
+            _context.Reservations.Add(reservation);
+
+            _context.WaitingList.Remove(next);
+
+            await _context.SaveChangesAsync();
+        }
+
+        // ===============================
+        // Exists
+        // ===============================
+
+        private bool RezervationExists(int id)
+        {
+            return _context.Reservations.Any(e => e.Reservation_Id == id);
+        }
+
+        // ===============================
+        // Dropdowns
+        // ===============================
+
         private void PopulateDropDowns(Rezervation? rezervation = null)
         {
-            // Users dropdown
-            var users = _context.Users
-                .AsNoTracking()
-                .OrderBy(u => u.Name)
-                .ToList(); // keep as entities, not anonymous types
-
             ViewData["User_Id"] = new SelectList(
-                users,                  // pass full entity
-                "User_Id",              // value field
-                "Name",                 // text field
-                rezervation?.User_Id);  // selected value
-
-            // Resources dropdown
-            var resources = _context.Resources
-                .AsNoTracking()
-                .OrderBy(r => r.Resource_Name)
-                .ToList(); // full entity
+                _context.Users.OrderBy(u => u.Name),
+                "User_Id",
+                "Name",
+                rezervation?.User_Id
+            );
 
             ViewData["Resource_Id"] = new SelectList(
-                resources,
+                _context.Resources.OrderBy(r => r.Resource_Name),
                 "Resource_Id",
                 "Resource_Name",
-                rezervation?.Resource_Id);
+                rezervation?.Resource_Id
+            );
         }
+        public async Task<IActionResult> Approve(int id)
+        {
+            var reservation = await _context.Reservations.FindAsync(id);
+
+            if (reservation == null)
+                return NotFound();
+
+            // Check if there is already an approved reservation for same room/date
+            bool alreadyApproved = _context.Reservations.Any(r =>
+                r.Room_Id == reservation.Room_Id &&
+                r.Start_Time == reservation.Start_Time &&
+                r.Status == ReservationStatus.Approved);
+
+            if (alreadyApproved)
+            {
+                reservation.Status = ReservationStatus.Waiting;
+            }
+            else
+            {
+                reservation.Status = ReservationStatus.Approved;
+            }
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
+        }
+
     }
 }

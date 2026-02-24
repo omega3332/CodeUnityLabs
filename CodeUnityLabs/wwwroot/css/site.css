@@ -37,6 +37,7 @@ table {
     background-color: #f1f3f5;
     font-weight: 600;
 }
+
 .table th {
     background-color: #f1f3f5;
     font-weight: 600;
@@ -53,6 +54,7 @@ table {
 .btn {
     border-radius: 8px;
 }
+
 .form-label {
     font-weight: 500;
     color: #495057;
@@ -66,6 +68,7 @@ table {
 .table td, .table th {
     vertical-align: middle;
 }
+
 .stat-card {
     background: white;
     border-radius: 14px;

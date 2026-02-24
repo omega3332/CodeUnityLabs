@@ -20,9 +20,13 @@ namespace CodeUnityLabs.Controllers
 
         public IActionResult Index()
         {
+            // Dashboard stats
             ViewBag.UserCount = _context.Users.Count();
             ViewBag.ReservationCount = _context.Reservations.Count();
             ViewBag.WaitingCount = _context.WaitingList.Count();
+
+            // Session-based user info (optional)
+            ViewBag.UserName = HttpContext.Session.GetString("UserName");
 
             return View();
         }
